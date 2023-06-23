@@ -7,7 +7,45 @@ import axios from 'axios';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.page.html',
+  template: `<ion-header [translucent]="true">
+      <ion-toolbar>
+        <ion-title> Login - Gabriela Ortega </ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content [fullscreen]="true" *ngIf="usuario">
+      <ion-card>
+        <ion-item>
+          <ion-label class="ion-text-wrap">
+            <h2>
+              <ion-item>
+                <ion-input
+                  label="Email :"
+                  labelPlacement="stacked"
+                  placeholder="Ingrese el email"
+                  [(ngModel)]="usuario.email"
+                ></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-input
+                  type="password"
+                  label="Password :"
+                  label-placement="stacked"
+                  placeholder="Ingrese el password"
+                  [(ngModel)]="usuario.password"
+                ></ion-input>
+              </ion-item>
+            </h2>
+          </ion-label>
+        </ion-item>
+      </ion-card>
+
+      <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+        <ion-fab-button (click)="loginUser()">
+          <ion-icon name="log-in-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </ion-content> `,
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {

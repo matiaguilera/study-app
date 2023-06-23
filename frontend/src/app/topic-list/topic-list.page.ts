@@ -5,7 +5,53 @@ import axios from 'axios';
 
 @Component({
   selector: 'app-topic-list',
-  templateUrl: './topic-list.page.html',
+  template: `<ion-header [translucent]="true">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button
+            [text]="getBackButtonText()"
+            defaultHref="/"
+          ></ion-back-button>
+        </ion-buttons>
+        <ion-title> Topicos - Gabriela Ortega </ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content [fullscreen]="true" *ngIf="topicos">
+      <ion-card>
+        <ion-list>
+          <!-- NOMBRE Y APELLIDO DEL TOPICO-->
+          <ion-item *ngFor="let topico of topicos">
+            <ion-label [routerLink]="'/user-edit/' + topico.id"
+              >{{ topico.id }} - {{ topico.name }} -
+              {{ topico.color }}</ion-label
+            >
+            <!-- EDITAR TOPICO-->
+
+            <ion-icon
+              slot="end"
+              name="create"
+              [routerLink]="'/topic-edit/' + topico.id"
+            ></ion-icon>
+
+            <!-- ELIMINAR TOPICO-->
+            <ion-icon
+              (click)="confirmDelete(topico.id)"
+              slot="end"
+              name="trash"
+            >
+            </ion-icon>
+          </ion-item>
+        </ion-list>
+      </ion-card>
+
+      <!-- AGREGAR TOPICO-->
+      <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+        <ion-fab-button [routerLink]="'/topic-edit/0'">
+          <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </ion-content> `,
   styleUrls: ['./topic-list.page.scss'],
 })
 export class TopicListPage implements OnInit {
