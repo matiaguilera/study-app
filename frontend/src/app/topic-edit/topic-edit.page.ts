@@ -1,7 +1,7 @@
-import { CommonModule, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonicModule, Platform, ToastController } from '@ionic/angular';
+import { Platform, ToastController } from '@ionic/angular';
 import { DataService, Message } from '../services/data.service';
 import axios from 'axios';
 
