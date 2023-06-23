@@ -1,0 +1,504 @@
+{
+	"info": {
+		"_postman_id": "08bc7aa5-0ad9-4d40-80bd-4b7ce12dccf7",
+		"name": "Study_App_Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24296853"
+	},
+	"item": [
+		{
+			"name": "users.list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/users/list?filtro=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"list"
+					],
+					"query": [
+						{
+							"key": "filtro",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users.login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\" : \"nuevo@gmail.com\",\r\n    \"password\" : \"1238\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users.logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibnVldm8gdXNlciBkZXNkZSBwb3N0bWFuIiwibGFzdF9uYW1lIjoiYXBlbGxpZG8gZGVzZGUgcG9zdG1hbiIsImF2YXRhciI6Im51bGwiLCJlbWFpbCI6Im51ZXZvQGdtYWlsLmNvbSIsImlhdCI6MTY4NDU0MDU1OH0.cdSPCGWRsDRc4g6HW-743ku43JCNrwICqSokk1dNr-c",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/user/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"user",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users.buscarPorCodigo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/users/buscarPorCodigo/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"buscarPorCodigo",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users.update",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 7,\r\n    \"name\": \"modif user desde postman aaa2\",\r\n    \"last_name\": \"modif apellido desde postman aaa2\",\r\n    \"avatar\": \"3223\",\r\n    \"email\": \"nuevo@gmail.com aaa\",\r\n    \"password\": \"1238 aaa\",\r\n    \"deleted\" : \"false\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/users/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users.delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/users/delete/7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"delete",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "themes.list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/themes/list?filtro=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"themes",
+						"list"
+					],
+					"query": [
+						{
+							"key": "filtro",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "themes.buscarPorCodigo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/themes/buscarPorCodigo/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"themes",
+						"buscarPorCodigo",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "themes.update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": null,\r\n    \"create_date\": \"2023-01-01\",\r\n    \"name\": \"lenguaje\",\r\n    \"description\": \"programacion node\",\r\n    \"keywords\": \"programar, lenguaje\",\r\n    \"owner_user_id\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/themes/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"themes",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "themes.delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/themes/delete/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"themes",
+						"delete",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "topics.list",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibnVldm8gdXNlciBkZXNkZSBwb3N0bWFuIiwibGFzdF9uYW1lIjoiYXBlbGxpZG8gZGVzZGUgcG9zdG1hbiIsImF2YXRhciI6Im51bGwiLCJlbWFpbCI6Im51ZXZvQGdtYWlsLmNvbSIsImlhdCI6MTY4NDU0MDU1OH0.cdSPCGWRsDRc4g6HW-743ku43JCNrwICqSokk1dNr-c",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/topics/list?filtro=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"topics",
+						"list"
+					],
+					"query": [
+						{
+							"key": "filtro",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "topics.buscarPorCodigo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/topics/buscarPorCodigo/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"topics",
+						"buscarPorCodigo",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "topics.update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibnVldm8gdXNlciBkZXNkZSBwb3N0bWFuIiwibGFzdF9uYW1lIjoiYXBlbGxpZG8gZGVzZGUgcG9zdG1hbiIsImF2YXRhciI6Im51bGwiLCJlbWFpbCI6Im51ZXZvQGdtYWlsLmNvbSIsImlhdCI6MTY4NDU0MDU1OH0.cdSPCGWRsDRc4g6HW-743ku43JCNrwICqSokk1dNr-c",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":null,\r\n    \"create_date\": \"2023-05-19\",\r\n    \"name\": \"Topico Parcial\",\r\n    \"topic_id\": \"1\",\r\n    \"order\": \"1\",\r\n    \"priority\": \"1\",\r\n    \"color\": \"azul\",\r\n    \"owner_user_id\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/topics/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"topics",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "topics.delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoibnVldm8gdXNlciBkZXNkZSBwb3N0bWFuIiwibGFzdF9uYW1lIjoiYXBlbGxpZG8gZGVzZGUgcG9zdG1hbiIsImF2YXRhciI6Im51bGwiLCJlbWFpbCI6Im51ZXZvQGdtYWlsLmNvbSIsImlhdCI6MTY4NDU0MDU1OH0.cdSPCGWRsDRc4g6HW-743ku43JCNrwICqSokk1dNr-c",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/topics/delete/14",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"topics",
+						"delete",
+						"14"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "themes_properties.list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/themes_properties/list?filtro=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"themes_properties",
+						"list"
+					],
+					"query": [
+						{
+							"key": "filtro",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "themes_properties.buscarPorCodigo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/themes_properties/buscarPorCodigo/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"themes_properties",
+						"buscarPorCodigo",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "themes_properties.buscarPorTema",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/themes_properties/buscarPorTema/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"themes_properties",
+						"buscarPorTema",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "themes_properties.update",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": null,\r\n    \"theme_id\": \"4\",\r\n    \"property_name\": \"visitado\",\r\n    \"property_value\": \"Falso\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/themes_properties/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"themes_properties",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "themes_properties.delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/themes_properties/delete/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"themes_properties",
+						"delete",
+						"4"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
