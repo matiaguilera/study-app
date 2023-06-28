@@ -1,8 +1,8 @@
-CREATE DATABASE study_app_db;
+CREATE DATABASE db_study_app;
 
-ALTER DATABASE study_app_db OWNER TO postgres;
+ALTER DATABASE db_study_app OWNER TO postgres;
 
-\connect study_app_db
+\connect db_study_app
 
 CREATE SCHEMA public;
 
