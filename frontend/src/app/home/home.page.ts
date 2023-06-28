@@ -1,123 +1,117 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { RefresherCustomEvent, ToastController } from '@ionic/angular';
-import { DataService, Message } from '../services/data.service';
+import { Component } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 import axios from 'axios';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
-  template: `<ion-router-outlet></ion-router-outlet>
+  template: `
     <ion-header [translucent]="true">
       <ion-toolbar>
         <ion-title>Study App</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="cerrarSesion()">
-            <ion-icon name="log-out-outline"></ion-icon>
+          <ion-button (click)="logout()">
+            <ion-icon name="log-out-outline" />
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
-    <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
-      <ion-refresher-content></ion-refresher-content>
-    </ion-refresher>
-
-    <ion-content [fullscreen]="true" *ngIf="temas">
+    <ion-content [fullscreen]="true" *ngIf="subjects">
       <ion-tabs>
         <ion-tab-bar slot="bottom">
-          <ion-tab-button [routerLink]="'/topic-list'">
-            <ion-icon name="document-text-outline"></ion-icon>
-            Topicos
+          <ion-tab-button routerLink="/topic-list">
+            <ion-icon name="document-text-outline" />
+            Tópicos
           </ion-tab-button>
-          <ion-tab-button [routerLink]="'/theme-list'">
-            <ion-icon name="document-text-outline"></ion-icon>
-            Temas
+          <ion-tab-button routerLink="/subject-list">
+            <ion-icon name="document-text-outline" />
+            Asignaturas
           </ion-tab-button>
-          <ion-tab-button [routerLink]="'/user-list'">
-            <ion-icon name="person-circle-outline"></ion-icon>
+          <ion-tab-button routerLink="/user-list">
+            <ion-icon name="person-circle-outline" />
             Usuarios
           </ion-tab-button>
         </ion-tab-bar>
       </ion-tabs>
+
       <ion-card>
         <ion-accordion-group>
-          <!-- Impresion de tema -->
-          <ion-accordion *ngFor="let tema of temas">
+          <ion-accordion *ngFor="let subject of subjects">
             <ion-item slot="header" color="light">
               <ion-label
-                >{{ tema.id }} - {{ tema.name }} -
-                {{ tema.description }}</ion-label
+                >{{ subject.id }} - {{ subject.name }} -
+                {{ subject.description }}</ion-label
               >
             </ion-item>
-            <!-- Impresion de propiedades del tema -->
             <div
-              *ngFor="let tema_propiedad of temas_propiedades"
+              *ngFor="let subjectProperty of subjectProperties"
               slot="content"
             >
               <label
-                *ngIf="tema_propiedad.theme_id === tema.id"
+                *ngIf="subjectProperty.theme_id === subject.id"
                 class="ion-padding"
               >
-                {{ tema_propiedad.theme_id }} -
-                {{ tema_propiedad.property_name }}
+                {{ subjectProperty.theme_id }} -
+                {{ subjectProperty.property_name }}
               </label>
             </div>
-
-            <!-- Boton para agregar propiedad -->
             <div class="ion-padding" slot="content">
-              <ion-icon slot="end" size="large" name="add-circle"></ion-icon>
+              <ion-icon
+                *ngIf="!subject.showPropertyForm"
+                (click)="subject.showPropertyForm = true"
+                slot="end"
+                size="large"
+                name="add-circle"
+              />
+              <app-subject-property-edit
+                (save)="
+                  saveProperty($event, subject.id);
+                  subject.showPropertyForm = false
+                "
+                (cancel)="subject.showPropertyForm = false"
+                *ngIf="subject.showPropertyForm"
+              />
             </div>
           </ion-accordion>
         </ion-accordion-group>
       </ion-card>
-    </ion-content> `,
+    </ion-content>
+  `,
 })
-export class HomePage implements OnInit {
-  private data = inject(DataService);
-  temas: any = [];
-  temas_propiedades: any = [];
+export class HomePage {
+  subjects: any = [];
+  subjectProperties: any = [];
+
+  token: string | null = '';
+  config: any;
 
   constructor(
     private toastController: ToastController,
     private router: Router
   ) {}
 
-  refresh(ev: any) {
-    setTimeout(() => {
-      (ev as RefresherCustomEvent).detail.complete();
-    }, 3000);
-  }
-
-  getMessages(): Message[] {
-    return this.data.getMessages();
-  }
-
   ionViewWillEnter(): void {
-    //verificar si el usuario no esta logueado
     let token = localStorage.getItem('token');
-    //localStorage.removeItem("token");
     if (!token) {
       this.router.navigate(['/login']);
       return;
     }
-    this.getThemes();
-    this.getThemesProperties();
-  }
-
-  cerrarSesion() {
-    let token = localStorage.getItem('token');
-    let data = '';
-    let config = {
+    this.token = localStorage.getItem('token');
+    this.config = {
       headers: {
         authorization: token,
       },
     };
+    this.getSubjects();
+    this.getSubjectProperties();
+  }
+
+  logout() {
     axios
-      .post('http://localhost:3000/user/logout', data, config)
+      .post('http://localhost:3000/user/logout', '', this.config)
       .then(async (result) => {
-        console.log('aber', config);
-        if (result.data.success == true) {
-          console.log('qlqpasa');
+        if (result.data.success) {
           localStorage.removeItem('token');
           this.presentToast('Sesion Finalizada');
           this.router.navigate(['/login']);
@@ -130,20 +124,32 @@ export class HomePage implements OnInit {
       });
   }
 
-  ngOnInit(): void {}
-
-  getThemes() {
-    let token = localStorage.getItem('token');
-    let config = {
-      headers: {
-        Authorization: token,
-      },
-    };
+  getSubjects() {
     axios
-      .get('http://localhost:3000/themes/list', config)
+      .get('http://localhost:3000/subjects/list', this.config)
       .then((result) => {
-        if (result.data.success == true) {
-          this.temas = result.data.temas;
+        if (result.data.success) {
+          result.data.subjects.map((subject: any) => {
+            subject.showPropertyForm = false;
+          });
+          this.subjects = result.data.subjects;
+        } else {
+          this.presentToast(result.data.error);
+          console.log(result.data.error);
+        }
+      })
+      .catch((error) => {
+        this.presentToast(error.message);
+        console.log(error.data.message);
+      });
+  }
+
+  getSubjectProperties() {
+    axios
+      .get('http://localhost:3000/subject_properties/list', this.config)
+      .then((result) => {
+        if (result.data.success) {
+          this.subjectProperties = result.data.subject_properties;
         } else {
           console.log(result.data.error);
           this.presentToast(result.data.error);
@@ -155,32 +161,38 @@ export class HomePage implements OnInit {
       });
   }
 
-  getThemesProperties() {
-    let token = localStorage.getItem('token');
+  saveProperty(newProperty: any, id: number) {
+    const token = localStorage.getItem('token');
     let config = {
       headers: {
         Authorization: token,
       },
     };
+    newProperty.theme_id = id;
+    console.log(newProperty);
     axios
-      .get('http://localhost:3000/themes_properties/list', config)
-      .then((result) => {
-        if (result.data.success == true) {
-          this.temas_propiedades = result.data.themes_properties;
+      .post(
+        'http://localhost:3000/subject_properties/update',
+        newProperty,
+        config
+      )
+      .then(async (result) => {
+        if (result.data.success) {
+          this.subjectProperties.push(newProperty);
+          this.presentToast('Nueva propiedad guardada');
+          this.router.navigate(['/home']);
         } else {
-          console.log(result.data.error);
           this.presentToast(result.data.error);
         }
       })
-      .catch((error) => {
-        console.log(error.message);
+      .catch(async (error) => {
         this.presentToast(error.message);
       });
   }
 
   async presentToast(message: string) {
     const toast = await this.toastController.create({
-      message: message,
+      message,
       duration: 1500,
       position: 'bottom',
     });
