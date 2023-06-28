@@ -1,34 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import axios from 'axios';
 
 @Component({
-  selector: 'app-user-list',
+  selector: 'app-theme-list',
   template: `<ion-header [translucent]="true">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-back-button defaultHref="/" />
         </ion-buttons>
-        <ion-title> Usuarios</ion-title>
+        <ion-title>Asignaturas</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [fullscreen]="true" *ngIf="usuarios">
+    <ion-content [fullscreen]="true" *ngIf="subjects">
       <ion-card>
         <ion-list>
-          <ion-item *ngFor="let usuario of usuarios">
-            <ion-label [routerLink]="'/user-edit/' + usuario.id"
-              >{{ usuario.id }} - {{ usuario.name }} -
-              {{ usuario.last_name }}</ion-label
+          <ion-item *ngFor="let subject of subjects">
+            <ion-label [routerLink]="'/subject-edit/' + subject.id"
+              >{{ subject.id }} - {{ subject.name }} -
+              {{ subject.description }}</ion-label
             >
             <ion-icon
               slot="end"
               name="create"
-              [routerLink]="'/user-edit/' + usuario.id"
+              [routerLink]="'/subject-edit/' + subject.id"
             />
             <ion-icon
-              (click)="confirmDelete(usuario.id)"
+              (click)="confirmDelete(subject.id)"
               slot="end"
               name="trash"
             />
@@ -37,14 +37,15 @@ import axios from 'axios';
       </ion-card>
 
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button routerLink="/user-edit/0">
+        <ion-fab-button routerLink="/subject-edit/0">
           <ion-icon name="add" />
         </ion-fab-button>
       </ion-fab>
     </ion-content> `,
 })
-export class UserListPage {
-  usuarios: any = [];
+export class SubjectListPage implements OnInit {
+  subjects: any = [];
+
   token: string | null = '';
   config: any;
 
@@ -65,8 +66,10 @@ export class UserListPage {
         Authorization: this.token,
       },
     };
-    this.getUsers();
+    this.getSubjects();
   }
+
+  ngOnInit() {}
 
   async confirmDelete(id: string) {
     const alert = await this.alertController.create({
@@ -76,7 +79,7 @@ export class UserListPage {
         {
           text: 'Aceptar',
           handler: () => {
-            this.deleteUser(id);
+            this.deleteSubject(id);
           },
         },
         {
@@ -88,12 +91,12 @@ export class UserListPage {
     await alert.present();
   }
 
-  getUsers() {
+  getSubjects() {
     axios
-      .get('http://localhost:3000/users/list', this.config)
+      .get('http://localhost:3000/subjects/list', this.config)
       .then((result) => {
         if (result.data.success) {
-          this.usuarios = result.data.usuarios;
+          this.subjects = result.data.subjects;
         } else {
           console.log(result.data.error);
         }
@@ -103,13 +106,15 @@ export class UserListPage {
       });
   }
 
-  deleteUser(id: any) {
+  deleteSubject(id: any) {
     axios
-      .delete('http://localhost:3000/users/delete/' + id, this.config)
+      .delete('http://localhost:3000/subjects/delete/' + id, this.config)
       .then((result) => {
         if (result.data.success) {
-          this.presentToast('Usuario Eliminado');
-          this.getUsers();
+          this.presentToast('Asignatura eliminada');
+          this.subjects = this.subjects.filter(
+            (subject: any) => subject.id !== id
+          );
         } else {
           this.presentToast(result.data.error);
         }

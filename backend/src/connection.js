@@ -1,6 +1,5 @@
-const { Sequelize } = require('sequelize')
-//el sequileze que se recupera debe ser en minuscula, pq hay dos sequelize
-//db, user, password
+import { Sequelize } from 'sequelize'
+
 const sequelize = new Sequelize('db_study_app', 'postgres', 'password', {
   host: 'localhost',
   port: 5432,
@@ -10,15 +9,12 @@ const sequelize = new Sequelize('db_study_app', 'postgres', 'password', {
 const testConnection = function () {
   try {
     sequelize.authenticate()
-    console.log('Conexion con exito')
+    console.log('Conexión exitosa')
   } catch (error) {
-    console.log('Error de conexion', error)
+    console.log('Error de conexión', error)
   }
 }
 
 testConnection()
 
-module.exports = {
-  Sequelize,
-  sequelize,
-}
+export default sequelize

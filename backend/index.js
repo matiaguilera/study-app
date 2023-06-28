@@ -1,6 +1,10 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
+import userRoute from './src/route/users.route.js'
+import subjectsRoute from './src/route/subjects.route.js'
+import topicsRoute from './src/route/topics.route.js'
+import subjectPropertiesRoute from './src/route/subject_properties.route.js'
+import express from 'express'
+import bodyParser from 'body-parser'
+import cors from 'cors'
 
 const app = express()
 app.use(bodyParser())
@@ -11,21 +15,9 @@ app.use(
   })
 )
 
-const userRoute = require('./src/route/users/users.route')
-const themesRoute = require('./src/route/themes/themes.route')
-const topicsRoute = require('./src/route/topics/topics.route')
-const themes_propertiesRoute = require('./src/route/themes_properties/themes_properties.route')
-
-app.get('/', function (req, res) {
-  res.send('Hello World')
-})
-app.get('/pagina2', function (req, res) {
-  res.json({ application: 'Study App', version: '1.0.0' })
-})
-
 userRoute(app)
-themesRoute(app)
+subjectsRoute(app)
 topicsRoute(app)
-themes_propertiesRoute(app)
+subjectPropertiesRoute(app)
 
 app.listen(3000)

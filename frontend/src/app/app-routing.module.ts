@@ -8,32 +8,19 @@ const routes: Routes = [
       import('./home/home.module').then((m) => m.HomePageModule),
   },
   {
-    path: 'view-message/:id',
-    loadChildren: () =>
-      import('./view-message/view-message.module').then(
-        (m) => m.ViewMessagePageModule
-      ),
-  },
-  {
     path: 'login',
     loadChildren: () =>
-      import('./login/login.module').then(
-        (m) => m.LoginPageModule
-      ),
+      import('./login/login.module').then((m) => m.LoginPageModule),
   },
   {
     path: 'user-edit/:id',
     loadChildren: () =>
-      import('./user-edit/user-edit.module').then(
-        (m) => m.UserEditPageModule
-      ),
+      import('./user-edit/user-edit.module').then((m) => m.UserEditPageModule),
   },
   {
     path: 'user-list',
     loadChildren: () =>
-      import('./user-list/user-list.module').then(
-        (m) => m.UserListPageModule
-      ),
+      import('./user-list/user-list.module').then((m) => m.UserListPageModule),
   },
   {
     path: 'topic-list',
@@ -50,17 +37,17 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'theme-list',
+    path: 'subject-list',
     loadChildren: () =>
-      import('./theme-list/theme-list.module').then(
-        (m) => m.ThemeListPageModule
+      import('./subject-list/subject-list.module').then(
+        (m) => m.SubjectListPageModule
       ),
   },
   {
-    path: 'theme-edit/:id',
+    path: 'subject-edit/:id',
     loadChildren: () =>
-      import('./theme-edit/theme-edit.module').then(
-        (m) => m.ThemeEditPageModule
+      import('./subject-edit/subject-edit.module').then(
+        (m) => m.SubjectEditPageModule
       ),
   },
   {

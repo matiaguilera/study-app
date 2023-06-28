@@ -1,8 +1,8 @@
-import { DataTypes } from 'sequelize'
+import DataTypes from 'sequelize'
 import sequelize from '../connection.js'
 
-const UserModel = sequelize.define(
-  'User',
+const SubjectsModel = sequelize.define(
+  'Themes',
   {
     id: {
       type: DataTypes.INTEGER,
@@ -10,36 +10,31 @@ const UserModel = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    create_date: {
+      type: DataTypes.TIME,
+      allowNull: false,
+    },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
-    last_name: {
+    description: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    avatar: {
+    keywords: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    email: {
-      type: DataTypes.STRING,
+    owner_user_id: {
+      type: DataTypes.INTEGER,
       allowNull: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    deleted: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
     },
   },
   {
-    //Other model options go here
-    tableName: 'users',
+    tableName: 'themes',
     timestamps: false,
   }
 )
 
-export default UserModel
+export default SubjectsModel

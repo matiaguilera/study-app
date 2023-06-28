@@ -20,39 +20,31 @@ import axios from 'axios';
     <ion-content [fullscreen]="true" *ngIf="topicos">
       <ion-card>
         <ion-list>
-          <!-- NOMBRE Y APELLIDO DEL TOPICO-->
           <ion-item *ngFor="let topico of topicos">
             <ion-label [routerLink]="'/user-edit/' + topico.id"
               >{{ topico.id }} - {{ topico.name }} -
               {{ topico.color }}</ion-label
             >
-            <!-- EDITAR TOPICO-->
-
             <ion-icon
               slot="end"
               name="create"
               [routerLink]="'/topic-edit/' + topico.id"
             ></ion-icon>
-
-            <!-- ELIMINAR TOPICO-->
             <ion-icon
               (click)="confirmDelete(topico.id)"
               slot="end"
               name="trash"
-            >
-            </ion-icon>
+            />
           </ion-item>
         </ion-list>
       </ion-card>
 
-      <!-- AGREGAR TOPICO-->
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button [routerLink]="'/topic-edit/0'">
           <ion-icon name="add"></ion-icon>
         </ion-fab-button>
       </ion-fab>
     </ion-content> `,
-  styleUrls: ['./topic-list.page.scss'],
 })
 export class TopicListPage implements OnInit {
   topicos: any = [];
@@ -66,7 +58,6 @@ export class TopicListPage implements OnInit {
   ) {}
 
   ionViewWillEnter(): void {
-    //verificar si el usuario no esta logueado
     let token = localStorage.getItem('token');
     if (!token) {
       this.router.navigate(['/login']);

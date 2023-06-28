@@ -1,7 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Platform, ToastController } from '@ionic/angular';
-import { DataService, Message } from '../services/data.service';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 import axios from 'axios';
 
 @Component({
@@ -12,7 +11,7 @@ import axios from 'axios';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [fullscreen]="true" *ngIf="usuario">
+    <ion-content [fullscreen]="true">
       <ion-card>
         <ion-item>
           <ion-label class="ion-text-wrap">
@@ -22,8 +21,8 @@ import axios from 'axios';
                   label="Email :"
                   labelPlacement="stacked"
                   placeholder="Ingrese el email"
-                  [(ngModel)]="usuario.email"
-                ></ion-input>
+                  [(ngModel)]="user.email"
+                />
               </ion-item>
               <ion-item>
                 <ion-input
@@ -31,8 +30,8 @@ import axios from 'axios';
                   label="Password :"
                   label-placement="stacked"
                   placeholder="Ingrese el password"
-                  [(ngModel)]="usuario.password"
-                ></ion-input>
+                  [(ngModel)]="user.password"
+                />
               </ion-item>
             </h2>
           </ion-label>
@@ -40,19 +39,14 @@ import axios from 'axios';
       </ion-card>
 
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button (click)="loginUser()">
-          <ion-icon name="log-in-outline"></ion-icon>
+        <ion-fab-button (click)="loginUser(user.email, user.password)">
+          <ion-icon name="log-in-outline" />
         </ion-fab-button>
       </ion-fab>
     </ion-content> `,
-  styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit {
-  public message!: Message;
-  private data = inject(DataService);
-  private activatedRoute = inject(ActivatedRoute);
-  private platform = inject(Platform);
-  usuario: any = '';
+export class LoginPage {
+  user = { email: '', password: '' };
 
   constructor(
     private toastController: ToastController,
@@ -60,16 +54,14 @@ export class LoginPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    //con este comando se recupera el id que se pasa
-    const id = this.activatedRoute.snapshot.paramMap.get('id') as string;
     axios
       .get('http://localhost:3000/users/buscarPorCodigo/0')
       .then((result) => {
         if (result.data.success == true) {
           if (result.data.usuario != null) {
-            this.usuario = result.data.usuario;
+            this.user = result.data.usuario;
           } else {
-            this.usuario = {};
+            this.user = { email: '', password: '' };
           }
         } else {
           console.log(result.data.error);
@@ -80,34 +72,26 @@ export class LoginPage implements OnInit {
       });
   }
 
-  getBackButtonText() {
-    const isIos = this.platform.is('ios');
-    return isIos ? 'Inbox' : '';
-  }
-
-  loginUser() {
-    console.log('usuario: ', this.usuario);
-    var data = {
-      email: this.usuario.email,
-      password: this.usuario.password,
-    };
+  loginUser(email: string, password: string) {
     axios
-      .post('http://localhost:3000/user/login', data)
+      .post('http://localhost:3000/user/login', { email, password })
       .then(async (result) => {
-        if (result.data.success == true) {
+        if (result.data.success) {
           this.presentToast('Bienvenido a StudyApp');
           localStorage.setItem('token', result.data.token);
           this.router.navigate(['/home']);
         } else {
+          console.log(result.data.error);
           this.presentToast(result.data.error);
         }
       })
       .catch(async (error) => {
+        console.log(error.message);
         this.presentToast(error.message);
       });
   }
+
   ionViewWillEnter(): void {
-    //verificar si el usuario esta logueado
     let token = localStorage.getItem('token');
     if (token) {
       this.router.navigate(['/home']);
