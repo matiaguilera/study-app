@@ -13,6 +13,11 @@ const routes: Routes = [
       import('./login/login.module').then((m) => m.LoginPageModule),
   },
   {
+    path: 'signup',
+    loadChildren: () =>
+      import('./signup/signup.module').then((m) => m.SignupPageModule),
+  },
+  {
     path: 'user-edit/:id',
     loadChildren: () =>
       import('./user-edit/user-edit.module').then((m) => m.UserEditPageModule),

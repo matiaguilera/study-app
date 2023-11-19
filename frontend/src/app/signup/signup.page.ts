@@ -4,10 +4,10 @@ import { ToastController } from '@ionic/angular';
 import axios from 'axios';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-signup',
   template: `<ion-header [translucent]="true">
       <ion-toolbar>
-        <ion-title>Iniciar sesión</ion-title>
+        <ion-title>Regístrate</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -16,6 +16,22 @@ import axios from 'axios';
         <ion-item>
           <ion-label class="ion-text-wrap">
             <h2>
+              <ion-item>
+                <ion-input
+                  label="Nombre :"
+                  label-placement="stacked"
+                  placeholder="Ingrese el nombre"
+                  [(ngModel)]="user.name"
+                ></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-input
+                  label="Apellido :"
+                  labelPlacement="stacked"
+                  placeholder="Ingrese el apellido"
+                  [(ngModel)]="user.last_name"
+                ></ion-input>
+              </ion-item>
               <ion-item>
                 <ion-input
                   label="Email :"
@@ -37,36 +53,22 @@ import axios from 'axios';
           </ion-label>
         </ion-item>
       </ion-card>
-      <div class="buttons-container">
-        <ion-button (click)="loginUser(user.email, user.password)"
-          >Acceder</ion-button
-        >
-        <p>
-          ¿No tienes cuenta?
-          <a routerLink="/signup">Regístrate</a>
-        </p>
+      <div class="button-container">
+        <ion-button (click)="saveUser()">Crear cuenta</ion-button>
       </div>
     </ion-content> `,
   styles: [
     `
-      .buttons-container {
+      .button-container {
         display: flex;
-        flex-direction: column;
         justify-content: center;
-        align-items: center;
         width: 100%;
-      }
-      ion-button {
-        width: fit-content;
-      }
-      p {
-        color: white;
       }
     `,
   ],
 })
-export class LoginPage {
-  user = { email: '', password: '' };
+export class SignupPage {
+  user: User = { email: '', password: '', name: '', last_name: '' };
 
   constructor(
     private toastController: ToastController,
@@ -111,6 +113,34 @@ export class LoginPage {
       });
   }
 
+  saveUser() {
+    let token = localStorage.getItem('token');
+    let config = {
+      headers: {
+        Authorization: token,
+      },
+    };
+    const data = {
+      name: this.user.name,
+      last_name: this.user.last_name,
+      email: this.user.email,
+      password: this.user.password,
+    };
+    axios
+      .post('http://localhost:3000/users/update', data, config)
+      .then(async (result) => {
+        if (result.data.success) {
+          this.presentToast('Usuario Guardado');
+          this.loginUser(this.user.email, this.user.password);
+        } else {
+          this.presentToast(result.data.error);
+        }
+      })
+      .catch(async (error) => {
+        this.presentToast(error.message);
+      });
+  }
+
   ionViewWillEnter(): void {
     let token = localStorage.getItem('token');
     if (token) {
@@ -127,3 +157,10 @@ export class LoginPage {
     await toast.present();
   }
 }
+
+type User = {
+  name?: string;
+  last_name?: string;
+  email: string;
+  password: string;
+};
