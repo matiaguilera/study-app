@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import axios from 'axios';
 import { Router } from '@angular/router';
 
@@ -10,6 +10,9 @@ import { Router } from '@angular/router';
       <ion-toolbar>
         <ion-title>Study App</ion-title>
         <ion-buttons slot="end">
+          <ion-button [routerLink]="'/user-edit/' + userId">
+            <ion-icon name="settings-outline" />
+          </ion-button>
           <ion-button (click)="logout()">
             <ion-icon name="log-out-outline" />
           </ion-button>
@@ -17,122 +20,147 @@ import { Router } from '@angular/router';
       </ion-toolbar>
     </ion-header>
 
-    <ion-content [fullscreen]="true" *ngIf="subjects">
-      <ion-tabs>
-        <ion-tab-bar slot="bottom">
-          <ion-tab-button routerLink="/topic-list">
-            <ion-icon name="document-text-outline" />
-            Tópicos
-          </ion-tab-button>
-          <ion-tab-button routerLink="/subject-list">
-            <ion-icon name="document-text-outline" />
-            Asignaturas
-          </ion-tab-button>
-          <ion-tab-button routerLink="/user-list">
-            <ion-icon name="person-circle-outline" />
-            Usuarios
-          </ion-tab-button>
-        </ion-tab-bar>
-      </ion-tabs>
+    <ion-content [fullscreen]="true" *ngIf="topics">
+      <ion-select
+        (ionChange)="onSelectChange($event)"
+        [disabled]="!topics"
+        label="Ordenar por:"
+        placeholder="defecto"
+      >
+        <ion-select-option value="defecto">defecto</ion-select-option>
+        <ion-select-option value="fecha">fecha</ion-select-option>
+        <ion-select-option value="prioridad">prioridad</ion-select-option>
+        <ion-select-option value="rango">rango</ion-select-option>
+      </ion-select>
 
-      <ion-card>
-        <ion-accordion-group>
-          <ion-accordion *ngFor="let subject of subjects">
-            <ion-item slot="header" color="light">
-              <ion-label
-                >{{ subject.id }} - {{ subject.name }} -
-                {{ subject.description }}</ion-label
+      <ion-list>
+        <ion-item *ngFor="let topic of topics">
+          <div class="container">
+            <ion-card [routerLink]="'/topic/' + topic.id">
+              <ion-card-header>
+                <ion-card-title
+                  >{{ topic.id }}) {{ topic.name }}</ion-card-title
+                >
+                <ion-card-subtitle
+                  >Creado por {{ topic.user_name + ' ' + topic.last_name }} el
+                  {{ topic.create_date | date : 'dd/MM/YY' }}</ion-card-subtitle
+                >
+              </ion-card-header>
+              <ion-card-content>
+                {{ topic.description }}
+              </ion-card-content>
+              <div style="padding-left: 20px; padding-bottom: 20px;">
+                <p>
+                  Orden: {{ topic.order }} - Prioridad: {{ topic.priority }}
+                </p>
+              </div>
+            </ion-card>
+            <ion-buttons *ngIf="topic.email === email">
+              <ion-button [routerLink]="'/topic-edit/' + topic.id" fill="clear"
+                >Editar</ion-button
               >
-            </ion-item>
-            <div
-              *ngFor="let subjectProperty of subjectProperties"
-              slot="content"
-            >
-              <label
-                *ngIf="subjectProperty.theme_id === subject.id"
-                class="ion-padding"
+              <ion-button
+                (click)="confirmDelete(topic.id)"
+                fill="clear"
+                color="danger"
+                >Eliminar</ion-button
               >
-                {{ subjectProperty.theme_id }} -
-                {{ subjectProperty.property_name }}
-              </label>
-            </div>
-            <div class="ion-padding" slot="content">
-              <ion-icon
-                *ngIf="!subject.showPropertyForm"
-                (click)="subject.showPropertyForm = true"
-                slot="end"
-                size="large"
-                name="add-circle"
-              />
-              <app-subject-property-edit
-                (save)="
-                  saveProperty($event, subject.id);
-                  subject.showPropertyForm = false
-                "
-                (cancel)="subject.showPropertyForm = false"
-                *ngIf="subject.showPropertyForm"
-              />
-            </div>
-          </ion-accordion>
-        </ion-accordion-group>
-      </ion-card>
+            </ion-buttons>
+          </div>
+        </ion-item>
+      </ion-list>
+      <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+        <ion-fab-button routerLink="/topic-edit/0">
+          <ion-icon name="add" />
+        </ion-fab-button>
+      </ion-fab>
     </ion-content>
   `,
+  styles: [
+    `
+      ion-card {
+        width: 100%;
+        cursor: pointer;
+      }
+      ion-card:hover {
+        background-color: #151515;
+      }
+      ion-select {
+        width: fit-content;
+        margin-left: 2rem;
+      }
+      ion-fab {
+        margin-right: 1rem;
+        margin-bottom: 1rem;
+      }
+      .container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    `,
+  ],
 })
 export class HomePage {
-  subjects: any = [];
-  subjectProperties: any = [];
+  topics: any = [];
+
+  email: string | null = '';
+  userId: string | null = '';
 
   token: string | null = '';
   config: any;
 
   constructor(
     private toastController: ToastController,
+    private alertController: AlertController,
     private router: Router
   ) {}
 
   ionViewWillEnter(): void {
-    let token = localStorage.getItem('token');
-    if (!token) {
+    this.token = localStorage.getItem('token');
+    if (!this.token) {
       this.router.navigate(['/login']);
       return;
     }
-    this.token = localStorage.getItem('token');
+    this.email = localStorage.getItem('email');
     this.config = {
       headers: {
-        authorization: token,
+        authorization: this.token,
       },
     };
-    this.getSubjects();
-    this.getSubjectProperties();
+    this.getTopics();
+    this.getUserId();
   }
 
-  logout() {
+  getUserId() {
+    let token = localStorage.getItem('token');
+    let config = {
+      headers: {
+        Authorization: token,
+      },
+    };
     axios
-      .post('http://localhost:3000/user/logout', '', this.config)
-      .then(async (result) => {
+      .get('http://localhost:3000/users/buscarPorEmail/' + this.email, config)
+      .then((result) => {
         if (result.data.success) {
-          localStorage.removeItem('token');
-          this.presentToast('Sesion Finalizada');
-          this.router.navigate(['/login']);
+          this.userId = result.data.usuario.id;
         } else {
-          this.presentToast(result.data.error);
+          console.log(result.data.error);
         }
       })
-      .catch(async (error) => {
-        this.presentToast(error.message);
+      .catch((error) => {
+        console.log(error.message);
       });
   }
 
-  getSubjects() {
+  deleteTopic(id: string) {
     axios
-      .get('http://localhost:3000/subjects/list', this.config)
+      .delete('http://localhost:3000/topics/delete/' + id, this.config)
       .then((result) => {
         if (result.data.success) {
-          result.data.subjects.map((subject: any) => {
-            subject.showPropertyForm = false;
-          });
-          this.subjects = result.data.subjects;
+          this.getTopics();
+          this.presentToast('Tópico eliminado.');
         } else {
           this.presentToast(result.data.error);
           console.log(result.data.error);
@@ -144,43 +172,35 @@ export class HomePage {
       });
   }
 
-  getSubjectProperties() {
-    axios
-      .get('http://localhost:3000/subject_properties/list', this.config)
-      .then((result) => {
-        if (result.data.success) {
-          this.subjectProperties = result.data.subject_properties;
-        } else {
-          console.log(result.data.error);
-          this.presentToast(result.data.error);
-        }
-      })
-      .catch((error) => {
-        console.log(error.message);
-        this.presentToast(error.message);
-      });
+  async confirmDelete(id: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirmación',
+      message: '¿Desea eliminar este tópico?',
+      buttons: [
+        {
+          text: 'Aceptar',
+          handler: () => {
+            this.deleteTopic(id);
+          },
+        },
+        {
+          text: 'Cancelar',
+          handler: () => {},
+        },
+      ],
+    });
+    await alert.present();
   }
 
-  saveProperty(newProperty: any, id: number) {
-    const token = localStorage.getItem('token');
-    let config = {
-      headers: {
-        Authorization: token,
-      },
-    };
-    newProperty.theme_id = id;
-    console.log(newProperty);
+  logout() {
     axios
-      .post(
-        'http://localhost:3000/subject_properties/update',
-        newProperty,
-        config
-      )
+      .post('http://localhost:3000/user/logout', '', this.config)
       .then(async (result) => {
         if (result.data.success) {
-          this.subjectProperties.push(newProperty);
-          this.presentToast('Nueva propiedad guardada');
-          this.router.navigate(['/home']);
+          localStorage.removeItem('token');
+          localStorage.removeItem('email');
+          this.presentToast('Sesion Finalizada');
+          this.router.navigate(['/login']);
         } else {
           this.presentToast(result.data.error);
         }
@@ -188,6 +208,59 @@ export class HomePage {
       .catch(async (error) => {
         this.presentToast(error.message);
       });
+  }
+
+  getTopics() {
+    axios
+      .get('http://localhost:3000/topics/list', this.config)
+      .then((result) => {
+        if (result.data.success) {
+          this.topics = result.data.topicos;
+        } else {
+          this.presentToast(result.data.error);
+          console.log(result.data.error);
+        }
+      })
+      .catch((error) => {
+        this.presentToast(error.message);
+        console.log(error.data.message);
+      });
+  }
+
+  onSelectChange(event: any) {
+    const tipo = event.target.value;
+    switch (tipo) {
+      case 'fecha':
+        this.orderByDate();
+        break;
+      case 'rango':
+        this.orderByRank();
+        break;
+      case 'prioridad':
+        this.orderByPriority();
+        break;
+      case 'defecto':
+        this.orderByDefault();
+    }
+  }
+
+  orderByDate() {
+    this.topics.sort(
+      (a: any, b: any) =>
+        (new Date(a.create_date) as any) - (new Date(b.create_date) as any)
+    );
+  }
+
+  orderByRank() {
+    this.topics.sort((a: any, b: any) => a.order - b.order);
+  }
+
+  orderByPriority() {
+    this.topics.sort((a: any, b: any) => a.priority - b.priority);
+  }
+
+  orderByDefault() {
+    this.topics.sort((a: any, b: any) => a.id - b.id);
   }
 
   async presentToast(message: string) {

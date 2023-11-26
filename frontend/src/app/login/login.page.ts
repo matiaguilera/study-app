@@ -77,8 +77,8 @@ export class LoginPage {
     axios
       .get('http://localhost:3000/users/buscarPorCodigo/0')
       .then((result) => {
-        if (result.data.success == true) {
-          if (result.data.usuario != null) {
+        if (result.data.success) {
+          if (result.data.usuario) {
             this.user = result.data.usuario;
           } else {
             this.user = { email: '', password: '' };
@@ -99,6 +99,7 @@ export class LoginPage {
         if (result.data.success) {
           this.presentToast('Bienvenido a StudyApp');
           localStorage.setItem('token', result.data.token);
+          localStorage.setItem('email', email);
           this.router.navigate(['/home']);
         } else {
           console.log(result.data.error);

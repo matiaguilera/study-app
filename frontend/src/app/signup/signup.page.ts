@@ -75,25 +75,6 @@ export class SignupPage {
     private router: Router
   ) {}
 
-  ngOnInit() {
-    axios
-      .get('http://localhost:3000/users/buscarPorCodigo/0')
-      .then((result) => {
-        if (result.data.success == true) {
-          if (result.data.usuario != null) {
-            this.user = result.data.usuario;
-          } else {
-            this.user = { email: '', password: '' };
-          }
-        } else {
-          console.log(result.data.error);
-        }
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-  }
-
   loginUser(email: string, password: string) {
     axios
       .post('http://localhost:3000/user/login', { email, password })
@@ -101,6 +82,7 @@ export class SignupPage {
         if (result.data.success) {
           this.presentToast('Bienvenido a StudyApp');
           localStorage.setItem('token', result.data.token);
+          localStorage.setItem('email', email);
           this.router.navigate(['/home']);
         } else {
           console.log(result.data.error);
@@ -114,12 +96,6 @@ export class SignupPage {
   }
 
   saveUser() {
-    let token = localStorage.getItem('token');
-    let config = {
-      headers: {
-        Authorization: token,
-      },
-    };
     const data = {
       name: this.user.name,
       last_name: this.user.last_name,
@@ -127,7 +103,7 @@ export class SignupPage {
       password: this.user.password,
     };
     axios
-      .post('http://localhost:3000/users/update', data, config)
+      .post('http://localhost:3000/users/update', data)
       .then(async (result) => {
         if (result.data.success) {
           this.presentToast('Usuario Guardado');

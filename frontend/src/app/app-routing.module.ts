@@ -23,36 +23,15 @@ const routes: Routes = [
       import('./user-edit/user-edit.module').then((m) => m.UserEditPageModule),
   },
   {
-    path: 'user-list',
+    path: 'topic/:id',
     loadChildren: () =>
-      import('./user-list/user-list.module').then((m) => m.UserListPageModule),
-  },
-  {
-    path: 'topic-list',
-    loadChildren: () =>
-      import('./topic-list/topic-list.module').then(
-        (m) => m.TopicListPageModule
-      ),
+      import('./topic/topic.module').then((m) => m.TopicPageModule),
   },
   {
     path: 'topic-edit/:id',
     loadChildren: () =>
       import('./topic-edit/topic-edit.module').then(
         (m) => m.TopicEditPageModule
-      ),
-  },
-  {
-    path: 'subject-list',
-    loadChildren: () =>
-      import('./subject-list/subject-list.module').then(
-        (m) => m.SubjectListPageModule
-      ),
-  },
-  {
-    path: 'subject-edit/:id',
-    loadChildren: () =>
-      import('./subject-edit/subject-edit.module').then(
-        (m) => m.SubjectEditPageModule
       ),
   },
   {

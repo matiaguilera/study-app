@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Platform, ToastController } from '@ionic/angular';
+import { Platform, ToastController, AlertController } from '@ionic/angular';
 import axios from 'axios';
 
 @Component({
@@ -13,7 +13,7 @@ import axios from 'axios';
             defaultHref="/"
           ></ion-back-button>
         </ion-buttons>
-        <ion-title> {{ accion }} </ion-title>
+        <ion-title>Editar perfil</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -53,20 +53,38 @@ import axios from 'axios';
         </ion-item>
       </ion-card>
 
-      <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button (click)="saveUser()">
-          <ion-icon name="save"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
+      <div class="buttons-container">
+        <ion-button (click)="saveUser()">Guardar</ion-button>
+        <ion-button
+          color="danger"
+          fill="clear"
+          (click)="confirmDelete(usuario.id)"
+          >Borrar cuenta</ion-button
+        >
+      </div>
     </ion-content> `,
+  styles: [
+    `
+      .buttons-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      }
+      ion-button {
+        width: fit-content;
+      }
+    `,
+  ],
 })
 export class UserEditPage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private platform = inject(Platform);
   usuario: any = '';
-  accion = 'Agregar Usuario';
+  config: any;
 
   constructor(
+    private alertController: AlertController,
     private toastController: ToastController,
     private router: Router
   ) {}
@@ -81,24 +99,17 @@ export class UserEditPage implements OnInit {
 
   ngOnInit() {
     let token = localStorage.getItem('token');
-    let config = {
+    this.config = {
       headers: {
         Authorization: token,
       },
     };
     const id = this.activatedRoute.snapshot.paramMap.get('id') as string;
     axios
-      .get('http://localhost:3000/users/buscarPorCodigo/' + id, config)
+      .get('http://localhost:3000/users/buscarPorCodigo/' + id, this.config)
       .then((result) => {
         if (result.data.success == true) {
-          if (id !== '0') {
-            this.accion = 'Editar Usuario';
-          }
-          if (result.data.usuario != null) {
-            this.usuario = result.data.usuario;
-          } else {
-            this.usuario = {};
-          }
+          this.usuario = result.data.usuario;
         } else {
           console.log(result.data.error);
         }
@@ -137,6 +148,42 @@ export class UserEditPage implements OnInit {
         }
       })
       .catch(async (error) => {
+        this.presentToast(error.message);
+      });
+  }
+
+  async confirmDelete(id: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirmación',
+      message: 'Desea eliminar el registro?',
+      buttons: [
+        {
+          text: 'Aceptar',
+          handler: () => {
+            this.deleteUser(id);
+          },
+        },
+        {
+          text: 'Cancelar',
+          handler: () => {},
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  deleteUser(id: any) {
+    axios
+      .delete('http://localhost:3000/users/delete/' + id, this.config)
+      .then((result) => {
+        if (result.data.success) {
+          this.presentToast('Usuario Eliminado');
+          this.router.navigate(['/login']);
+        } else {
+          this.presentToast(result.data.error);
+        }
+      })
+      .catch((error) => {
         this.presentToast(error.message);
       });
   }

@@ -11,7 +11,7 @@ import axios from 'axios';
         <ion-buttons slot="start">
           <ion-back-button [text]="getBackButtonText()" defaultHref="/" />
         </ion-buttons>
-        <ion-title>{{ accion }} - Gabriela Ortega</ion-title>
+        <ion-title>{{ accion }} tópico</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -27,7 +27,15 @@ import axios from 'axios';
                     label-placement="stacked"
                     placeholder="Ingrese el nombre"
                     [(ngModel)]="topic.name"
-                  ></ion-input>
+                  />
+                </ion-item>
+                <ion-item>
+                  <ion-input
+                    label="Descripción :"
+                    label-placement="stacked"
+                    placeholder="Ingrese una descripción"
+                    [(ngModel)]="topic.description"
+                  />
                 </ion-item>
                 <ion-item>
                   <ion-input
@@ -43,14 +51,6 @@ import axios from 'axios';
                     labelPlacement="stacked"
                     placeholder="Ingrese prioridad en numeros"
                     [(ngModel)]="topic.priority"
-                  />
-                </ion-item>
-                <ion-item>
-                  <ion-input
-                    label="Color :"
-                    labelPlacement="stacked"
-                    placeholder="Ingrese el color"
-                    [(ngModel)]="topic.color"
                   />
                 </ion-item>
               </ion-list>
@@ -70,7 +70,9 @@ export class TopicEditPage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private platform = inject(Platform);
   topic: any = '';
-  accion = 'Agregar Topico';
+  accion = 'Agregar';
+  email: string | null = '';
+  userId = '';
 
   constructor(
     private toastController: ToastController,
@@ -92,16 +94,19 @@ export class TopicEditPage implements OnInit {
         Authorization: token,
       },
     };
+    this.getUserId();
     const id = this.activatedRoute.snapshot.paramMap.get('id') as string;
     axios
       .get('http://localhost:3000/topics/buscarPorCodigo/' + id, config)
       .then((result) => {
         if (result.data.success) {
           if (id !== '0') {
-            this.accion = 'Editar Topico';
+            this.accion = 'Editar';
           }
-          if (result.data.topic != null) {
-            this.topic = result.data.topic;
+          if (result.data.topic) {
+            const { id, name, description, priority, order } =
+              result.data.topic;
+            this.topic = { id, name, description, priority, order };
           } else {
             this.topic = {};
           }
@@ -120,6 +125,7 @@ export class TopicEditPage implements OnInit {
   }
 
   saveTopic() {
+    this.email = localStorage.getItem('email');
     let token = localStorage.getItem('token');
     let config = {
       headers: {
@@ -127,27 +133,49 @@ export class TopicEditPage implements OnInit {
       },
     };
     let fecha = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
-    var data = {
+    let data = {
       id: this.topic.id,
-      topic_id: this.topic.id,
       create_date: fecha,
       name: this.topic.name,
+      description: this.topic.description,
       order: this.topic.order,
       priority: this.topic.priority,
-      color: this.topic.color,
+      owner_user_id: this.userId,
     };
     axios
       .post('http://localhost:3000/topics/update', data, config)
       .then(async (result) => {
         if (result.data.success) {
           this.presentToast('Topico Guardado');
-          this.router.navigate(['/topic-list']);
+          this.router.navigate(['/']);
         } else {
           this.presentToast(result.data.error);
         }
       })
       .catch(async (error) => {
         this.presentToast(error.message);
+      });
+  }
+
+  getUserId() {
+    let token = localStorage.getItem('token');
+    this.email = localStorage.getItem('email');
+    let config = {
+      headers: {
+        Authorization: token,
+      },
+    };
+    axios
+      .get('http://localhost:3000/users/buscarPorEmail/' + this.email, config)
+      .then((result) => {
+        if (result.data.success) {
+          this.userId = result.data.usuario.id;
+        } else {
+          console.log(result.data.error);
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
       });
   }
 
