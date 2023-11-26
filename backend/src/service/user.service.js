@@ -35,17 +35,33 @@ const consultarPorCodigo = async function (codigo) {
   }
 }
 
+const consultarPorEmail = async function (codigo) {
+  try {
+    const userModelResult = await sequelize.query(`SELECT * 
+    FROM users 
+    WHERE
+    email = '${codigo}'`)
+    if (userModelResult) {
+      return userModelResult[0][0]
+    } else {
+      return []
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
 const actualizar = async function (
   id,
   name,
   last_name,
-  avatar,
   email,
   password,
   deleted
 ) {
   let userReturn = null
-  const data = { id, name, last_name, avatar, email, password, deleted }
+  const data = { id, name, last_name, email, password, deleted }
   try {
     let userExist = null
     if (id) {
@@ -77,6 +93,7 @@ const eliminar = async function (codigo) {
 export default {
   listar,
   busquedaPorCodigo: consultarPorCodigo,
+  busquedaPorEmail: consultarPorEmail,
   actualizar,
   eliminar,
 }

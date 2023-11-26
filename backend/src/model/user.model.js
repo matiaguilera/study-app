@@ -18,10 +18,6 @@ const UserModel = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    avatar: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     email: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -36,7 +32,6 @@ const UserModel = sequelize.define(
     },
   },
   {
-    //Other model options go here
     tableName: 'users',
     timestamps: false,
   }

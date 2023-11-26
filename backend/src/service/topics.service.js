@@ -1,15 +1,20 @@
 import sequelize from '../connection.js'
-import TopicsModel  from '../model/topics.model.js'
+import TopicsModel from '../model/topics.model.js'
 
-const listar = async function (textoBuscar) {
+const listar = async function () {
   try {
-    const topics = await sequelize.query(`SELECT * 
-      FROM topics
-      WHERE 1=1
-        AND UPPER(name) LIKE UPPER('%${textoBuscar}%')
-      ORDER BY id`)
-    if (topics && topics[0]) {
-      return topics[0]
+    const topicItems = await sequelize.query(`SELECT 
+      t.id AS id, 
+      t.create_date, 
+      t.name, t.description, 
+      u.name AS user_name, u.last_name,
+      u.email,
+      t.order,
+      t.priority
+      FROM topics t JOIN users u ON t.owner_user_id = u.id
+      ORDER BY t.id`)
+    if (topicItems && topicItems[0]) {
+      return topicItems[0]
     } else {
       return []
     }
@@ -19,12 +24,20 @@ const listar = async function (textoBuscar) {
   }
 }
 
-const consultarPorCodigo = async function (codigo) {
-  console.log('consultar 1 topico por codigo')
+const busquedaPorCodigo = async function (codigo) {
   try {
-    const topicsModelResult = await TopicsModel.findByPk(codigo)
-    if (topicsModelResult) {
-      return topicsModelResult
+    const TopicModelResult = await sequelize.query(`SELECT 
+    t.id AS id, 
+    t.create_date, 
+    t.name, t.description, t.priority, t.order,
+    u.name AS user_name, u.last_name,
+    u.email,
+    t.order,
+    t.priority
+    FROM topics t JOIN users u ON t.owner_user_id = u.id WHERE t.id = ${codigo}
+    ORDER BY t.id`)
+    if (TopicModelResult) {
+      return TopicModelResult[0][0]
     } else {
       return []
     }
@@ -38,23 +51,19 @@ const actualizar = async function (
   id,
   create_date,
   name,
-  topic_id,
+  description,
   order,
   priority,
-  color,
   owner_user_id
 ) {
-  console.log('actualizar topicos')
-
   let topicsReturn = null
   const data = {
     id,
     create_date,
     name,
-    topic_id,
+    description,
     order,
     priority,
-    color,
     owner_user_id,
   }
 
@@ -64,7 +73,7 @@ const actualizar = async function (
       topicsExist = await TopicsModel.findByPk(id)
     }
     if (topicsExist) {
-      topicsReturn = await TopicsModel.update(data, { where: { id: id } })
+      topicsReturn = await TopicsModel.update(data, { where: { id } })
       topicsReturn = data
     } else {
       topicsReturn = await TopicsModel.create(data)
@@ -77,9 +86,7 @@ const actualizar = async function (
 }
 
 const eliminar = async function (codigo) {
-  console.log('eliminar topicos')
   try {
-    //pide tb poner topic_id (??)
     TopicsModel.destroy({ where: { id: codigo } }, { truncate: false })
   } catch (error) {
     console.log(error)
@@ -89,7 +96,7 @@ const eliminar = async function (codigo) {
 
 export default {
   listar,
-  busquedaPorCodigo: consultarPorCodigo,
+  busquedaPorCodigo,
   actualizar,
   eliminar,
 }

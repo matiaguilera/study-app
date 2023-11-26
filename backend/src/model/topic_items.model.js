@@ -1,14 +1,18 @@
 import DataTypes from 'sequelize'
 import sequelize from '../connection.js'
 
-const SubjectsModel = sequelize.define(
-  'Themes',
+const TopicItemsModel = sequelize.define(
+  'TopicItems',
   {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
+    },
+    topic_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
     create_date: {
       type: DataTypes.TIME,
@@ -22,19 +26,11 @@ const SubjectsModel = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    keywords: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    owner_user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
   },
   {
-    tableName: 'themes',
+    tableName: 'topic_items',
     timestamps: false,
   }
 )
 
-export default SubjectsModel
+export default TopicItemsModel

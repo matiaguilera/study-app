@@ -1,8 +1,8 @@
 import DataTypes from 'sequelize'
 import sequelize from '../connection.js'
 
-const SubjectPropertiesModel = sequelize.define(
-  'SubjectProperties',
+const TopicPropertiesModel = sequelize.define(
+  'TopicProperties',
   {
     id: {
       type: DataTypes.INTEGER,
@@ -10,7 +10,7 @@ const SubjectPropertiesModel = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    theme_id: {
+    topic_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
@@ -24,9 +24,9 @@ const SubjectPropertiesModel = sequelize.define(
     },
   },
   {
-    tableName: 'themes_properties',
+    tableName: 'topic_properties',
     timestamps: false,
   }
 )
 
-export default SubjectPropertiesModel
+export default TopicPropertiesModel

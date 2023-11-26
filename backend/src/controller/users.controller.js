@@ -50,6 +50,31 @@ const consultarPorCodigo = async function (req, res) {
   }
 }
 
+const consultarPorEmail = async function (req, res) {
+  try {
+    const userModelResult = await UserService.busquedaPorEmail(
+      req.params.filtro || ''
+    )
+    if (userModelResult) {
+      res.json({
+        success: true,
+        usuario: userModelResult,
+      })
+    } else {
+      res.json({
+        success: true,
+        usuario: [],
+      })
+    }
+  } catch (error) {
+    console.log(error)
+    res.json({
+      success: false,
+      error: error.message,
+    })
+  }
+}
+
 const actualizar = async function (req, res) {
   let userReturn = null
   try {
@@ -57,7 +82,6 @@ const actualizar = async function (req, res) {
       req.body.id,
       req.body.name,
       req.body.last_name,
-      req.body.avatar,
       req.body.email,
       req.body.password,
       req.body.deleted
@@ -99,14 +123,14 @@ const login = async function (req, res) {
         req.body.password +
         "'"
     )
+    console.log(userDB)
     if (userDB.length > 0 && userDB[0].length > 0) {
-      const { id, name, last_name, avatar, email } = userDB[0][0]
+      const { id, name, last_name, email } = userDB[0][0]
       let token = jwt.sign(
         {
           id,
           name,
           last_name,
-          avatar,
           email,
         },
         'passwd'
@@ -153,6 +177,7 @@ const logout = async function (req, res) {
 export default {
   listar,
   busquedaPorCodigo: consultarPorCodigo,
+  busquedaPorEmail: consultarPorEmail,
   actualizar,
   eliminar,
   login,

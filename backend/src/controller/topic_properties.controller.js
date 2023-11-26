@@ -1,19 +1,19 @@
-import subjectPropertiesService from '../service/subject_properties.service.js'
+import topicPropertiesService from '../service/topic_properties.service.js'
 
 const listar = async function (req, res) {
   try {
-    const subject_properties = await subjectPropertiesService.listar(
-      req.query.filtro || ''
+    const topicProperties = await topicPropertiesService.listar(
+      req.params.filtro || ''
     )
-    if (subject_properties) {
+    if (topicProperties) {
       res.json({
         success: true,
-        subject_properties,
+        topicProperties,
       })
     } else {
       res.json({
         success: true,
-        subject_properties: [],
+        topicProperties: [],
       })
     }
   } catch (error) {
@@ -27,18 +27,18 @@ const listar = async function (req, res) {
 
 const consultarPorCodigo = async function (req, res) {
   try {
-    const subject_properties = await subjectPropertiesService.busquedaPorCodigo(
+    const topic_properties = await topicPropertiesService.busquedaPorCodigo(
       req.params.filtro || ''
     )
     if (themesPropertiesModelResult) {
       res.json({
         success: true,
-        subject_properties,
+        topic_properties,
       })
     } else {
       res.json({
         success: true,
-        subject_properties: [],
+        topic_properties: [],
       })
     }
   } catch (error) {
@@ -52,19 +52,19 @@ const consultarPorCodigo = async function (req, res) {
 
 const consultarPorCodigoTheme = async function (req, res) {
   try {
-    const subject_properties =
-      await subjectPropertiesService.consultarPorCodigoTheme(
+    const topic_properties =
+      await topicPropertiesService.consultarPorCodigoTheme(
         req.params.filtro || ''
       )
     if (themesPropertiesModelResult) {
       res.json({
         success: true,
-        subject_properties,
+        topic_properties,
       })
     } else {
       res.json({
         success: true,
-        subject_properties: [],
+        topic_properties: [],
       })
     }
   } catch (error) {
@@ -79,9 +79,9 @@ const consultarPorCodigoTheme = async function (req, res) {
 const actualizar = async function (req, res) {
   let themesPropertiesReturn = null
   try {
-    themesPropertiesReturn = await subjectPropertiesService.actualizar(
+    themesPropertiesReturn = await topicPropertiesService.actualizar(
       req.body.id,
-      req.body.theme_id,
+      req.body.topic_id,
       req.body.property_name,
       req.body.property_value
     )
@@ -100,7 +100,7 @@ const actualizar = async function (req, res) {
 
 const eliminar = async function (req, res) {
   try {
-    await subjectPropertiesService.eliminar(req.params.filtro || '')
+    await topicPropertiesService.eliminar(req.params.filtro || '')
     res.json({
       success: true,
     })

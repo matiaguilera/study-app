@@ -1,19 +1,15 @@
-import subjectsService from '../service/subjects.service.js'
+import topicItemsService from '../service/topic_items.service.js'
 
 const listar = async function (req, res) {
   try {
-    const subjects = await subjectsService.listar(req.query.filtro || '')
-    if (subjects) {
-      res.json({
-        success: true,
-        subjects,
-      })
-    } else {
-      res.json({
-        success: true,
-        subjects: [],
-      })
+    const topicItems = await topicItemsService.listar(req.params.filtro || '')
+    if (!topicItems) {
+      topicItems = []
     }
+    res.json({
+      success: true,
+      topicItems,
+    })
   } catch (error) {
     console.log(error)
     res.json({
@@ -25,18 +21,18 @@ const listar = async function (req, res) {
 
 const consultarPorCodigo = async function (req, res) {
   try {
-    const subjectsModelResult = await subjectsService.busquedaPorCodigo(
+    const topicItemsModelResult = await topicItemsService.busquedaPorCodigo(
       req.params.filtro || ''
     )
-    if (subjectsModelResult) {
+    if (topicItemsModelResult) {
       res.json({
         success: true,
-        subject: subjectsModelResult,
+        topicItem: topicItemsModelResult,
       })
     } else {
       res.json({
         success: true,
-        subject: [],
+        topicItem: [],
       })
     }
   } catch (error) {
@@ -49,17 +45,15 @@ const consultarPorCodigo = async function (req, res) {
 }
 
 const actualizar = async function (req, res) {
-  const { id, create_date, name, description, keywords, owner_user_id } =
-    req.body
+  const { id, create_date, name, description, topic_id } = req.body
 
   try {
-    await subjectsService.actualizar(
+    await topicItemsService.actualizar(
       id,
       create_date,
       name,
       description,
-      keywords,
-      owner_user_id
+      topic_id
     )
     res.json({
       success: true,
@@ -76,7 +70,7 @@ const actualizar = async function (req, res) {
 
 const eliminar = async function (req, res) {
   try {
-    await subjectsService.eliminar(req.params.filtro || '')
+    await topicItemsService.eliminar(req.params.filtro || '')
     res.json({
       success: true,
     })

@@ -1,8 +1,8 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../connection.js'
 
-const TopicsModel = sequelize.define(
-  'Topics',
+const CommentsModel = sequelize.define(
+  'Comments',
   {
     id: {
       type: DataTypes.INTEGER,
@@ -14,17 +14,12 @@ const TopicsModel = sequelize.define(
       type: DataTypes.TIME,
       allowNull: false,
     },
-    name: {
+    content: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    description: {
+    theme_id: {
       type: DataTypes.STRING,
-      allowNull: true,
-    },
-    order: { type: DataTypes.INTEGER, allowNull: true },
-    priority: {
-      type: DataTypes.INTEGER,
       allowNull: true,
     },
     owner_user_id: {
@@ -33,9 +28,9 @@ const TopicsModel = sequelize.define(
     },
   },
   {
-    tableName: 'topics',
+    tableName: 'comments',
     timestamps: false,
   }
 )
 
-export default TopicsModel
+export default CommentsModel

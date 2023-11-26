@@ -1,9 +1,8 @@
 import topicsService from '../service/topics.service.js'
 
 const listar = async function (req, res) {
-  console.log('listar topicos controller')
   try {
-    const topics = await topicsService.listar(req.query.filtro || '')
+    const topics = await topicsService.listar()
     if (topics) {
       res.json({
         success: true,
@@ -25,7 +24,6 @@ const listar = async function (req, res) {
 }
 
 const consultarPorCodigo = async function (req, res) {
-  console.log('consultar 1 topico por codigo controller')
   try {
     const topicsModelResult = await topicsService.busquedaPorCodigo(
       req.params.filtro || ''
@@ -51,8 +49,6 @@ const consultarPorCodigo = async function (req, res) {
 }
 
 const actualizar = async function (req, res) {
-  console.log('actualizar topicos controller')
-
   let topicsReturn = null
 
   try {
@@ -60,10 +56,9 @@ const actualizar = async function (req, res) {
       req.body.id,
       req.body.create_date,
       req.body.name,
-      req.body.topic_id,
+      req.body.description,
       req.body.order,
       req.body.priority,
-      req.body.color,
       req.body.owner_user_id
     )
     res.json({
@@ -80,7 +75,6 @@ const actualizar = async function (req, res) {
 }
 
 const eliminar = async function (req, res) {
-  console.log('eliminar topicos controller')
   try {
     await topicsService.eliminar(req.params.filtro || '')
     res.json({
